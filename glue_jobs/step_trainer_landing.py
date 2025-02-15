@@ -49,7 +49,7 @@ def filter_step_trainer_landing_to_trusted(step_trainer_folder_path, customer_cu
 
 if __name__ == "__main__":
     step_trainer_folder = "/Users/audrey/PycharmProjects/stedi-data-pipeline/starter/step_trainer/landing"
-    customer_curated_file = "/Users/audrey/PycharmProjects/stedi-data-pipeline/glue_jobs/data/curated/customer_curated.json"
-    output_dir = "/Users/audrey/PycharmProjects/stedi-data-pipeline/glue_jobs/data/trusted"
+    customer_curated_file = "/s3/curated/customer_curated.json"
+    output_dir = "/s3/trusted"
 
     filter_step_trainer_landing_to_trusted(step_trainer_folder, customer_curated_file, output_dir)

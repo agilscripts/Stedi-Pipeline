@@ -1,46 +1,39 @@
-import json
-import os
+import sys
+from awsglue.transforms import Filter
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
 
-def filter_customers_landing_to_trusted(landing_file_path: str, output_dir: str):
-    """
-    1. Reads a local JSON file of customer landing data
-    2. Filters out customers who do not have shareWithResearchAsOfDate
-    3. Writes filtered JSON lines to an output directory
-    """
+# Get job arguments
+args = getResolvedOptions(sys.argv, ['JOB_NAME'])
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
 
-    # Make sure the output directory exists
-    os.makedirs(output_dir, exist_ok=True)
+# Read customer landing data from the Data Catalog
+customer_landing = glueContext.create_dynamic_frame.from_catalog(
+    database="stedi",
+    table_name="customer_landing",
+    transformation_ctx="customer_landing"
+)
 
-    with open(landing_file_path, 'r') as infile:
-        lines = infile.readlines()
+# Keep only records with a valid shareWithResearchAsOfDate
+customer_trusted = Filter.apply(
+    frame=customer_landing,
+    f=lambda row: row.get("shareWithResearchAsOfDate") not in (None, "", "null")
+)
 
-    # We'll store only the records with a valid shareWithResearchAsOfDate
-    trusted_records = []
-    for line in lines:
-        line = line.strip()
-        if not line:
-            continue  # skip any blank lines
-        record = json.loads(line)
+# Save the trusted customer records to S3 as JSON
+output_path = "s3://stedi-project/customer_trusted/"
+glueContext.write_dynamic_frame.from_options(
+    frame=customer_trusted,
+    connection_type="s3",
+    connection_options={"path": output_path},
+    format="json",
+    transformation_ctx="datasink"
+)
 
-        # If "shareWithResearchAsOfDate" exists and is not blank/None
-        if record.get("shareWithResearchAsOfDate"):
-            trusted_records.append(record)
-
-    # Write out the filtered data
-    output_file_path = os.path.join(output_dir, "customer_trusted.json")
-    with open(output_file_path, 'w') as outfile:
-        for rec in trusted_records:
-            outfile.write(json.dumps(rec) + "\n")
-
-    print(f"Wrote {len(trusted_records)} filtered records to {output_file_path}")
-
-
-if __name__ == "__main__":
-    # Change this path to wherever your actual JSON file is stored
-    # For example, if your file is in 'starter/customer/landing/customer_landing.json', do:
-    landing_file = "/Users/audrey/PycharmProjects/stedi-data-pipeline/starter/customer/landing/customer_landing.json"
-
-    # This is the directory where the filtered JSON will be written
-    out_dir = "./data/trusted"
-
-    filter_customers_landing_to_trusted(landing_file, out_dir)
+job.commit()

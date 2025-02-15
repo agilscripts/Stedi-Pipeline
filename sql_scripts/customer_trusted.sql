@@ -1,18 +1,15 @@
-CREATE EXTERNAL TABLE stedi.customer_trusted (
-    serialnumber                string,
-    sharewithpublicasofdate     bigint,
-    birthday                    date,
-    registrationdate            bigint,
-    sharewithresearchasofdate   bigint,
-    customername                string,
-    sharewithfriendsasofdate    bigint,
-    email                       string,
-    lastupdatedate              bigint,
-    phone                       string
+CREATE EXTERNAL TABLE IF NOT EXISTS stedi.customer_trusted (
+    serialnumber                STRING,
+    sharewithpublicasofdate     BIGINT,
+    birthday                    STRING,
+    registrationdate            BIGINT,
+    sharewithresearchasofdate   BIGINT,
+    customername                STRING,
+    sharewithfriendsasofdate    BIGINT,
+    email                       STRING,
+    lastupdatedate              BIGINT,
+    phone                       STRING
 )
 ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe'
-WITH SERDEPROPERTIES (
-    'ignore.malformed.json'='true'
-)
-LOCATION 's3://stedi-project/customer_trusted/'
+LOCATION 's3://stedi-project/Trusted Zone/customer/'
 TBLPROPERTIES ('has_encrypted_data'='false');
