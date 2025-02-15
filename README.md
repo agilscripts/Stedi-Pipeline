@@ -1,6 +1,6 @@
 # STEDI Data Pipeline Project
 
-In this project, I built a data pipeline to process STEDI Step Trainer and mobile app data using AWS Glue, S3, and Athena. The goal is to filter and combine data from customers who agreed to share their data, then create final datasets for machine learning.
+In this project, I built a data pipeline to process STEDI Step Trainer and mobile app data using AWS Glue, S3, and Athena. 
 
 ---
 
