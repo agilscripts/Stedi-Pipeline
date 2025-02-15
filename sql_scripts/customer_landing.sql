@@ -1,7 +1,7 @@
 CREATE EXTERNAL TABLE IF NOT EXISTS stedi.customer_landing (
     serialnumber                STRING,
     sharewithpublicasofdate     BIGINT,
-    birthday                    STRING,   -- or DATE if you prefer
+    birthday                    STRING,
     registrationdate            BIGINT,
     sharewithresearchasofdate   BIGINT,
     customername                STRING,

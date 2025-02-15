@@ -31,7 +31,12 @@ output_path = "s3://stedi-project/customer_trusted/"
 glueContext.write_dynamic_frame.from_options(
     frame=customer_trusted,
     connection_type="s3",
-    connection_options={"path": output_path},
+    connection_options={
+        "path": output_path,
+        "createTable": "true",
+        "updateBehavior": "UPDATE_IN_DATABASE",
+        "partitionKeys": []
+    },
     format="json",
     transformation_ctx="datasink"
 )
