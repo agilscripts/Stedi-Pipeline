@@ -36,7 +36,6 @@ joined = Join.apply(
     transformation_ctx="joined"
 )
 
-# Optionally, select only step trainer fields
 selected = joined.select_fields(["sensorReadingTime", "serialNumber", "distanceFromObject"])
 
 # Save the trusted step trainer records to S3

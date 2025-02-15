@@ -23,7 +23,7 @@ def filter_step_trainer_landing_to_trusted(step_trainer_folder_path, customer_cu
             if "serialNumber" in cust_record:
                 valid_serials.add(cust_record["serialNumber"])
 
-    # We'll accumulate all the filtered step trainer records here
+
     trusted_records = []
 
     # Read all JSON files in the step_trainer_folder_path
